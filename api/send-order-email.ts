@@ -9,13 +9,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const supabaseAdmin = getSupabaseAdmin();
+    const { orderId } = req.body;
 
-  const { orderId } = req.body;
-  if (!orderId) {
-    return res.status(400).json({ error: 'Order ID is required' });
-  }
+    if (!orderId) {
+      return res.status(400).json({ error: 'Order ID is required' });
+    }
 
-  try {
     const { data: order, error: orderError } = await supabaseAdmin
       .from('orders')
       .select('*, order_items(*)')

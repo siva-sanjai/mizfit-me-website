@@ -9,7 +9,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const supabaseAdmin = getSupabaseAdmin();
 
-  try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ error: 'Unauthorized' });
