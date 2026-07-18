@@ -16,6 +16,9 @@ export function useCart() {
 
   useEffect(() => {
     refresh();
+    const onCartChange = () => refresh();
+    window.addEventListener('cart-updated', onCartChange);
+    return () => window.removeEventListener('cart-updated', onCartChange);
   }, [refresh]);
 
   const addItem = useCallback((item: CartItem) => {

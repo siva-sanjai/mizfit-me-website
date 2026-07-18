@@ -13,6 +13,7 @@ export function getCart(): CartItem[] {
 
 export function saveCart(items: CartItem[]): void {
   localStorage.setItem(CART_KEY, JSON.stringify(items));
+  window.dispatchEvent(new Event('cart-updated'));
 }
 
 export function addToCart(item: CartItem): void {
@@ -35,6 +36,7 @@ export function updateCartItemQuantity(itemId: string, quantity: number): void {
 
 export function clearCart(): void {
   localStorage.removeItem(CART_KEY);
+  window.dispatchEvent(new Event('cart-updated'));
 }
 
 export function getCartTotal(): number {
