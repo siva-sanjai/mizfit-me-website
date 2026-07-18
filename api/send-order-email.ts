@@ -1,11 +1,14 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseAdmin } from './_lib/supabase-admin';
+import { getSupabaseAdmin } from './_lib/supabase-admin';
 import nodemailer from 'nodemailer';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  try {
+    const supabaseAdmin = getSupabaseAdmin();
 
   const { orderId } = req.body;
   if (!orderId) {

@@ -1,10 +1,13 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { supabaseAdmin } from './_lib/supabase-admin';
+import { getSupabaseAdmin } from './_lib/supabase-admin';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  try {
+    const supabaseAdmin = getSupabaseAdmin();
 
   try {
     const authHeader = req.headers.authorization;
