@@ -719,6 +719,8 @@ export default function HomePage() {
         }
         @media (max-width: 768px) { .hero-cta-btn { height: 48px; padding: 0 24px; font-size: 13px; margin-top: 20px; } }
         .hero-cta-btn:hover { background: #111111; color: #FFFFFF; }
+        .hero-arrow { display: flex; }
+        @media (max-width: 768px) { .hero-arrow { display: none; } }
       `}</style>
       {/* 1. Hero Carousel */}
       <section
@@ -777,6 +779,7 @@ export default function HomePage() {
         <button
           onClick={prev}
           aria-label="Previous slide"
+          className="hero-arrow"
           style={{
             position: 'absolute',
             left: '16px',
@@ -807,6 +810,7 @@ export default function HomePage() {
         <button
           onClick={next}
           aria-label="Next slide"
+          className="hero-arrow"
           style={{
             position: 'absolute',
             right: '16px',
