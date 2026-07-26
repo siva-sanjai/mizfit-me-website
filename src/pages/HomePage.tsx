@@ -56,10 +56,10 @@ const values = [
 ]
 
 const heroSlides = [
-  { img: heroImg1, heading: ['MADE TO.', 'BE UNIQUE.'] },
-  { img: heroImg2, heading: ['FROM IDEA.', 'TO TEE.'] },
-  { img: heroImg3, heading: ['YOUR ART.', 'YOUR FIT.'] },
-  { img: heroImg4, heading: ['CREATE.', 'WE PRINT.'] },
+  { img: heroImg1, heading: ['MADE TO', 'BE UNIQUE'] },
+  { img: heroImg2, heading: ['FROM IDEA', 'TO TEE'] },
+  { img: heroImg3, heading: ['YOUR ART', 'YOUR FIT'] },
+  { img: heroImg4, heading: ['CREATE', 'WE PRINT'] },
 ]
 
 function Spinner() {
@@ -764,10 +764,10 @@ export default function HomePage() {
                 <span className="hero-heading-line" style={{ display: 'block' }}>{slide.heading[1]}</span>
               </h1>
               <Link
-                to="/customize"
+                to="/shop"
                 className="hero-cta-btn"
               >
-                Customize Your Tee
+                Shop Now
               </Link>
             </div>
           </div>
