@@ -640,7 +640,7 @@ export default function HomePage() {
 
   useEffect(() => {
     if (prefersReduced || hovered) return
-    const id = setInterval(next, 5000)
+    const id = setInterval(next, 3000)
     return () => clearInterval(id)
   }, [prefersReduced, hovered, next, slideKey])
 
@@ -691,15 +691,43 @@ export default function HomePage() {
           .hero-slide-active .hero-heading-line,
           .hero-slide-active .hero-cta-btn { animation: none !important; opacity: 1; }
         }
+        .hero-carousel { position: relative; width: 100%; overflow: hidden; background: #090909; cursor: default; height: 850px; }
+        @media (max-width: 1280px) { .hero-carousel { height: 750px; } }
+        @media (max-width: 1024px) { .hero-carousel { height: 650px; } }
+        @media (max-width: 768px) { .hero-carousel { height: 420px; } }
+        @media (max-width: 480px) { .hero-carousel { height: 380px; } }
+        .hero-text-wrap {
+          position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+          left: 8%; max-width: 420px;
+        }
+        @media (max-width: 1024px) { .hero-text-wrap { left: 6%; } }
+        @media (max-width: 768px) { .hero-text-wrap { left: 24px; right: 24px; max-width: none; top: auto; bottom: 70px; transform: none; } }
+        .hero-heading {
+          font-weight: 900; letter-spacing: -2px; line-height: 0.9;
+          text-transform: uppercase; color: #FFFFFF; margin: 0;
+          font-size: 96px;
+        }
+        @media (max-width: 1280px) { .hero-heading { font-size: 72px; } }
+        @media (max-width: 768px) { .hero-heading { font-size: 42px; letter-spacing: -1px; } }
+        @media (max-width: 480px) { .hero-heading { font-size: 36px; letter-spacing: -0.5px; } }
+        .hero-cta-btn {
+          display: inline-flex; align-items: center; justify-content: center;
+          height: 56px; padding: 0 32px; background: #FFFFFF; color: #000000;
+          border-radius: 999px; font-weight: 600; font-size: 14px;
+          letter-spacing: 0.02em; text-decoration: none; margin-top: 28px;
+          transition: background 250ms ease, color 250ms ease;
+        }
+        @media (max-width: 768px) { .hero-cta-btn { height: 48px; padding: 0 24px; font-size: 13px; margin-top: 20px; } }
+        .hero-cta-btn:hover { background: #111111; color: #FFFFFF; }
       `}</style>
       {/* 1. Hero Carousel */}
       <section
+        className="hero-carousel"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        style={{ position: 'relative', width: '100%', height: 'clamp(520px, 48vw, 850px)', overflow: 'hidden', background: '#090909', cursor: 'default' }}
       >
         {heroSlides.map((slide, i) => (
           <div
@@ -728,47 +756,14 @@ export default function HomePage() {
               }}
             />
             <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.18)', zIndex: 1 }} />
-            <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: 'clamp(24px, 8vw, 8%)',
-              transform: 'translateY(-50%)',
-              zIndex: 2,
-              maxWidth: '420px',
-            }}>
-              <h1 style={{
-                fontWeight: 900,
-                letterSpacing: '-2px',
-                lineHeight: 0.9,
-                textTransform: 'uppercase' as const,
-                color: '#FFFFFF',
-                fontSize: 'clamp(48px, 8vw, 96px)',
-                margin: 0,
-              }}>
+            <div className="hero-text-wrap">
+              <h1 className="hero-heading">
                 <span className="hero-heading-line" style={{ display: 'block' }}>{slide.heading[0]}</span>
                 <span className="hero-heading-line" style={{ display: 'block' }}>{slide.heading[1]}</span>
               </h1>
               <Link
                 to="/customize"
                 className="hero-cta-btn"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '56px',
-                  padding: '0 32px',
-                  background: '#FFFFFF',
-                  color: '#000000',
-                  borderRadius: '999px',
-                  fontWeight: 600,
-                  fontSize: '14px',
-                  letterSpacing: '0.02em',
-                  textDecoration: 'none',
-                  marginTop: '28px',
-                  transition: 'background 250ms ease, color 250ms ease',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#111111'; e.currentTarget.style.color = '#FFFFFF'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.color = '#000000'; }}
               >
                 Customize Your Tee
               </Link>
