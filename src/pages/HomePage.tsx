@@ -614,7 +614,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeSlide, setActiveSlide] = useState(0)
-  const [slideKey, setSlideKey] = useState(0)
   const [hovered, setHovered] = useState(false)
   const touchStartX = useRef(0)
   const touchDeltaX = useRef(0)
@@ -630,19 +629,17 @@ export default function HomePage() {
 
   const goTo = useCallback((idx: number) => {
     setActiveSlide(idx)
-    setSlideKey(k => k + 1)
   }, [])
 
   const next = useCallback(() => {
     setActiveSlide(i => (i + 1) % heroSlides.length)
-    setSlideKey(k => k + 1)
   }, [])
 
   useEffect(() => {
     if (prefersReduced || hovered) return
     const id = setInterval(next, 3000)
     return () => clearInterval(id)
-  }, [prefersReduced, hovered, next, slideKey])
+  }, [prefersReduced, hovered])
 
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
@@ -658,7 +655,6 @@ export default function HomePage() {
       } else {
         setActiveSlide(i => (i - 1 + heroSlides.length) % heroSlides.length)
       }
-      setSlideKey(k => k + 1)
     }
   }
 
@@ -691,25 +687,25 @@ export default function HomePage() {
           .hero-slide-active .hero-heading-line,
           .hero-slide-active .hero-cta-btn { animation: none !important; opacity: 1; }
         }
-        .hero-carousel { position: relative; width: 100%; overflow: hidden; background: #090909; cursor: default; height: 850px; }
-        @media (max-width: 1280px) { .hero-carousel { height: 750px; } }
-        @media (max-width: 1024px) { .hero-carousel { height: 650px; } }
-        @media (max-width: 768px) { .hero-carousel { height: 420px; } }
-        @media (max-width: 480px) { .hero-carousel { height: 380px; } }
+        .hero-carousel { position: relative; width: 100%; overflow: hidden; background: #090909; cursor: default; height: 75vh; min-height: 520px; max-height: 720px; }
+        @media (max-width: 1280px) { .hero-carousel { height: 65vh; min-height: 450px; max-height: 600px; } }
+        @media (max-width: 1024px) { .hero-carousel { height: 55vh; min-height: 380px; max-height: 500px; } }
+        @media (max-width: 768px) { .hero-carousel { height: 50vh; min-height: 340px; max-height: 420px; } }
+        @media (max-width: 480px) { .hero-carousel { height: 45vh; min-height: 300px; max-height: 380px; } }
         .hero-text-wrap {
           position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
           left: 8%; max-width: 420px;
         }
-        @media (max-width: 1024px) { .hero-text-wrap { left: 6%; } }
+        @media (max-width: 1024px) { .hero-text-wrap { left: 6%; max-width: 360px; } }
         @media (max-width: 768px) { .hero-text-wrap { left: 24px; right: 24px; max-width: none; top: auto; bottom: 70px; transform: none; } }
         .hero-heading {
           font-weight: 900; letter-spacing: -2px; line-height: 0.9;
           text-transform: uppercase; color: #FFFFFF; margin: 0;
-          font-size: 96px;
+          font-size: clamp(36px, 5vw, 72px);
         }
-        @media (max-width: 1280px) { .hero-heading { font-size: 72px; } }
-        @media (max-width: 768px) { .hero-heading { font-size: 42px; letter-spacing: -1px; } }
-        @media (max-width: 480px) { .hero-heading { font-size: 36px; letter-spacing: -0.5px; } }
+        @media (max-width: 1024px) { .hero-heading { font-size: clamp(32px, 5vw, 56px); letter-spacing: -1.5px; } }
+        @media (max-width: 768px) { .hero-heading { font-size: clamp(28px, 7vw, 42px); letter-spacing: -1px; } }
+        @media (max-width: 480px) { .hero-heading { font-size: 32px; letter-spacing: -0.5px; } }
         .hero-cta-btn {
           display: inline-flex; align-items: center; justify-content: center;
           height: 56px; padding: 0 32px; background: #FFFFFF; color: #000000;
@@ -729,19 +725,21 @@ export default function HomePage() {
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        {heroSlides.map((slide, i) => (
-          <div
-            key={i}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              opacity: i === activeSlide ? 1 : 0,
-              transition: 'opacity 1.2s ease-in-out',
-              pointerEvents: i === activeSlide ? 'auto' : 'none',
-              zIndex: i === activeSlide ? 1 : 0,
-            }}
-            className={i === activeSlide ? 'hero-slide-active' : ''}
-          >
+        {heroSlides.map((slide, i) => {
+          const isActive = i === activeSlide;
+          return (
+            <div
+              key={i}
+              style={{
+                position: 'absolute',
+                inset: 0,
+                opacity: isActive ? 1 : 0,
+                transition: 'opacity 1s ease-in-out',
+                pointerEvents: isActive ? 'auto' : 'none',
+                zIndex: isActive ? 1 : 0,
+              }}
+              className={isActive ? 'hero-slide-active' : ''}
+            >
             <img
               src={slide.img}
               alt=""
