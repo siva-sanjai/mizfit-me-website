@@ -117,7 +117,6 @@ export default function FloatingHeader() {
         zIndex: 100,
         width: '100%',
         background: '#f6f6f3',
-        borderBottom: '1px solid rgba(0,0,0,0.06)',
       }}>
         <div className="mizfit-container" style={{
           display: 'grid',
@@ -128,14 +127,16 @@ export default function FloatingHeader() {
           height: isMobile ? 56 : 64,
         }}>
           <div style={{ justifySelf: 'start' }}>
-            <Link to="/" style={{ textDecoration: 'none', display: 'block' }}>
+            <Link to="/" style={{ textDecoration: 'none', display: 'block', outline: 'none', border: 'none' }}>
               <span style={{
-                fontSize: isMobile ? 20 : 24,
-                fontWeight: 800,
-                letterSpacing: '-0.05em',
+                fontFamily: "'Inter', sans-serif",
+                fontSize: isMobile ? 20 : 26,
+                fontWeight: 900,
+                letterSpacing: '-0.06em',
                 lineHeight: 1,
                 color: '#0a0a0a',
                 whiteSpace: 'nowrap',
+                display: 'block',
               }}>MIZFIT</span>
             </Link>
           </div>
