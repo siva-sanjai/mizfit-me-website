@@ -77,7 +77,40 @@ export default function FloatingHeader() {
           from { opacity: 0; transform: translateY(-8px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes fhMarquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .fh-marquee-track {
+          display: flex;
+          width: max-content;
+          animation: fhMarquee 20s linear infinite;
+        }
+        .fh-marquee-track:hover { animation-play-state: paused; }
       `}</style>
+
+      {/* Announcement marquee */}
+      <div style={{
+        background: '#0a0a0a',
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: isMobile ? 10 : 11,
+        fontWeight: 500,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        height: isMobile ? 24 : 28,
+        display: 'flex',
+        alignItems: 'center',
+      }}>
+        <div className="fh-marquee-track">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <span key={i} style={{ padding: '0 32px', flexShrink: 0 }}>
+              WE ARE LAUNCHING SOON &nbsp;&nbsp;&#x2022;&nbsp;&nbsp; STAY TUNED &nbsp;&nbsp;&#x2022;&nbsp;&nbsp; PREMIUM CUSTOM TEES &nbsp;&nbsp;&#x2022;&nbsp;&nbsp;
+            </span>
+          ))}
+        </div>
+      </div>
 
       <header style={{
         position: 'relative',
