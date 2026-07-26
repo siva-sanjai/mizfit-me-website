@@ -84,7 +84,7 @@ export default function FloatingHeader() {
         .fh-marquee-track {
           display: flex;
           width: max-content;
-          animation: fhMarquee 20s linear infinite;
+          animation: fhMarquee 50s linear infinite;
         }
         .fh-marquee-track:hover { animation-play-state: paused; }
       `}</style>
