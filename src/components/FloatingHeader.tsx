@@ -4,7 +4,6 @@ import { useCart } from '@/hooks/useCart';
 
 const NAV_ITEMS = [
   { path: '/shop', label: 'SHOP' },
-  { path: '/customize', label: 'CUSTOMIZE' },
   { path: '/about', label: 'ABOUT' },
   { path: '/contact', label: 'CONTACT' },
 ];
