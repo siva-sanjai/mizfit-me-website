@@ -1,8 +1,12 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import type { Product } from '@/types'
 import { getFeaturedProducts } from '@/services/products'
 import ProductCard from '@/components/ProductCard'
+import heroImg1 from '@/assets/Hero-Section/Hero1.png'
+import heroImg2 from '@/assets/Hero-Section/Hero2.png'
+import heroImg3 from '@/assets/Hero-Section/Hero3.png'
+import heroImg4 from '@/assets/Hero-Section/Hero4.png'
 
 const steps = [
   { num: '01', title: 'CHOOSE YOUR TEE', desc: 'Pick your fit, size & color.' },
@@ -51,24 +55,17 @@ const values = [
   },
 ]
 
+const heroSlides = [
+  { img: heroImg1, heading: ['MADE TO.', 'BE UNIQUE.'] },
+  { img: heroImg2, heading: ['FROM IDEA.', 'TO TEE.'] },
+  { img: heroImg3, heading: ['YOUR ART.', 'YOUR FIT.'] },
+  { img: heroImg4, heading: ['CREATE.', 'WE PRINT.'] },
+]
+
 function Spinner() {
   return (
     <div className="flex items-center justify-center py-20">
       <div className="w-8 h-8 border-2 border-mz-gray-200 border-t-mz-dark rounded-full animate-spin" />
-    </div>
-  )
-}
-
-function DotPattern() {
-  return (
-    <div className="absolute inset-0 overflow-hidden">
-      <div
-        className="absolute inset-0 opacity-[0.07]"
-        style={{
-          backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)',
-          backgroundSize: '24px 24px',
-        }}
-      />
     </div>
   )
 }
@@ -616,7 +613,11 @@ export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [heroVisible, setHeroVisible] = useState(false)
+  const [activeSlide, setActiveSlide] = useState(0)
+  const [slideKey, setSlideKey] = useState(0)
+  const [hovered, setHovered] = useState(false)
+  const touchStartX = useRef(0)
+  const touchDeltaX = useRef(0)
 
   useEffect(() => {
     getFeaturedProducts()
@@ -625,142 +626,182 @@ export default function HomePage() {
       .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => {
-    const timer = setTimeout(() => setHeroVisible(true), 100)
-    return () => clearTimeout(timer)
+  const prefersReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const goTo = useCallback((idx: number) => {
+    setActiveSlide(idx)
+    setSlideKey(k => k + 1)
   }, [])
+
+  const next = useCallback(() => {
+    setActiveSlide(i => (i + 1) % heroSlides.length)
+    setSlideKey(k => k + 1)
+  }, [])
+
+  useEffect(() => {
+    if (prefersReduced || hovered) return
+    const id = setInterval(next, 5000)
+    return () => clearInterval(id)
+  }, [prefersReduced, hovered, next, slideKey])
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    touchDeltaX.current = 0
+  }
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current
+  }
+  const onTouchEnd = () => {
+    if (Math.abs(touchDeltaX.current) > 50) {
+      if (touchDeltaX.current < 0) {
+        setActiveSlide(i => (i + 1) % heroSlides.length)
+      } else {
+        setActiveSlide(i => (i - 1 + heroSlides.length) % heroSlides.length)
+      }
+      setSlideKey(k => k + 1)
+    }
+  }
 
   return (
     <div>
       <style>{`
-        .hero-mizfit-bg {
-          position: relative;
+        @keyframes heroFadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        .hero-mizfit-sweep {
-          animation: heroMizfitSweep 8s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+        @keyframes heroKenBurns {
+          from { transform: scale(1); }
+          to { transform: scale(1.08); }
         }
-        @keyframes heroMizfitSweep {
-          0% { background-position: 150% center; }
-          45% { background-position: -150% center; }
-          100% { background-position: -150% center; }
+        .hero-slide-active .hero-slide-img {
+          animation: heroKenBurns 7s ease-out forwards;
         }
-        @media (max-width: 639px) {
-          .hero-mizfit-sweep {
-            animation-duration: 10s;
-          }
-          .hero-mizfit-base {
-            color: rgba(255,255,255,0.025) !important;
-          }
+        .hero-slide-active .hero-heading-line {
+          animation: heroFadeIn 0.8s ease-out forwards;
+          opacity: 0;
+        }
+        .hero-slide-active .hero-heading-line:nth-child(1) { animation-delay: 0.15s; }
+        .hero-slide-active .hero-heading-line:nth-child(2) { animation-delay: 0.3s; }
+        .hero-slide-active .hero-cta-btn {
+          animation: heroFadeIn 0.8s ease-out 0.45s forwards;
+          opacity: 0;
         }
         @media (prefers-reduced-motion: reduce) {
-          .hero-mizfit-sweep {
-            animation: none !important;
-            opacity: 0 !important;
-          }
+          .hero-slide-active .hero-slide-img { animation: none !important; transform: scale(1.04); }
+          .hero-slide-active .hero-heading-line,
+          .hero-slide-active .hero-cta-btn { animation: none !important; opacity: 1; }
         }
       `}</style>
-      {/* 1. Hero Banner */}
-      <section className="mt-3 sm:mt-4">
-        <div className="mizfit-container">
+      {/* 1. Hero Carousel */}
+      <section
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        style={{ position: 'relative', width: '100%', height: 'clamp(520px, 48vw, 850px)', overflow: 'hidden', background: '#090909', cursor: 'default' }}
+      >
+        {heroSlides.map((slide, i) => (
           <div
-            className="relative overflow-hidden"
-            style={{ width: '100%', height: 'clamp(400px, 48vh, 520px)', borderRadius: '18px', background: '#090909' }}
+            key={i}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              opacity: i === activeSlide ? 1 : 0,
+              transition: 'opacity 1.2s ease-in-out',
+              pointerEvents: i === activeSlide ? 'auto' : 'none',
+              zIndex: i === activeSlide ? 1 : 0,
+            }}
+            className={i === activeSlide ? 'hero-slide-active' : ''}
           >
-            <DotPattern />
-            <div className="absolute inset-0 bg-gradient-to-b from-mz-black/10 via-mz-black/30 to-mz-black/70" />
-            {/* Large MIZFIT background typography */}
-            <div
-              className="hidden md:block pointer-events-none select-none hero-mizfit-bg"
-              style={{ position: 'absolute', right: 'clamp(24px, 5vw, 80px)', top: '50%', transform: 'translateY(-50%)', zIndex: 1 }}
-            >
-              <span
-                className="hero-mizfit-base"
-                style={{
-                  fontSize: 'clamp(120px, 16vw, 280px)',
-                  fontWeight: 900,
-                  letterSpacing: '-0.08em',
-                  lineHeight: 1,
-                  color: 'rgba(255,255,255,0.035)',
-                  whiteSpace: 'nowrap',
-                  display: 'block',
-                }}
-              >
-                MIZFIT
-              </span>
-              <span
-                className="hero-mizfit-sweep"
-                aria-hidden="true"
-                style={{
-                  fontSize: 'clamp(120px, 16vw, 280px)',
-                  fontWeight: 900,
-                  letterSpacing: '-0.08em',
-                  lineHeight: 1,
-                  whiteSpace: 'nowrap',
-                  display: 'block',
-                  position: 'absolute',
-                  inset: 0,
-                  backgroundImage: 'linear-gradient(110deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.025) 35%, rgba(255,255,255,0.13) 48%, rgba(255,255,255,0.20) 50%, rgba(255,255,255,0.13) 52%, rgba(255,255,255,0.025) 65%, rgba(255,255,255,0.025) 100%)',
-                  backgroundSize: '250% 100%',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  color: 'transparent',
-                  WebkitTextFillColor: 'transparent',
-                  filter: 'drop-shadow(0 0 18px rgba(255,255,255,0.015)) drop-shadow(0 0 40px rgba(255,255,255,0.01))',
-                }}
-              >
-                MIZFIT
-              </span>
-            </div>
-            {/* Hero content */}
-            <div
-              style={{ position: 'absolute', left: 'clamp(32px, 5vw, 80px)', top: '50%', transform: 'translateY(-50%)', zIndex: 2, maxWidth: '620px', right: 'clamp(32px, 5vw, 80px)' }}
-            >
-              <p
-                className={`text-[11px] sm:text-xs font-medium uppercase tracking-[0.25em] text-mz-gray-400 mb-5 sm:mb-8 transition-all duration-700 ease-out ${
-                  heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-                }`}
-              >
-                Premium Custom T-Shirt Printing
-              </p>
-              <h1
-                className={`text-white font-extrabold leading-[0.9] transition-all duration-700 ease-out delay-150 ${
-                  heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-                }`}
-                style={{ fontSize: 'clamp(52px, 5vw, 76px)', letterSpacing: '-0.045em' }}
-              >
-                CUSTOM PRINTS.<br />
-                YOUR RULES.
+            <img
+              src={slide.img}
+              alt=""
+              loading={i === 0 ? 'eager' : 'lazy'}
+              className="hero-slide-img"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center',
+                display: 'block',
+              }}
+            />
+            <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.18)', zIndex: 1 }} />
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: 'clamp(24px, 8vw, 8%)',
+              transform: 'translateY(-50%)',
+              zIndex: 2,
+              maxWidth: '420px',
+            }}>
+              <h1 style={{
+                fontWeight: 900,
+                letterSpacing: '-2px',
+                lineHeight: 0.9,
+                textTransform: 'uppercase' as const,
+                color: '#FFFFFF',
+                fontSize: 'clamp(48px, 8vw, 96px)',
+                margin: 0,
+              }}>
+                <span className="hero-heading-line" style={{ display: 'block' }}>{slide.heading[0]}</span>
+                <span className="hero-heading-line" style={{ display: 'block' }}>{slide.heading[1]}</span>
               </h1>
-              <p
-                className={`mt-4 sm:mt-5 text-base sm:text-lg text-mz-gray-400 max-w-lg leading-relaxed transition-all duration-700 ease-out delay-300 ${
-                  heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-                }`}
+              <Link
+                to="/customize"
+                className="hero-cta-btn"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '56px',
+                  padding: '0 32px',
+                  background: '#FFFFFF',
+                  color: '#000000',
+                  borderRadius: '999px',
+                  fontWeight: 600,
+                  fontSize: '14px',
+                  letterSpacing: '0.02em',
+                  textDecoration: 'none',
+                  marginTop: '28px',
+                  transition: 'background 250ms ease, color 250ms ease',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#111111'; e.currentTarget.style.color = '#FFFFFF'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#FFFFFF'; e.currentTarget.style.color = '#000000'; }}
               >
-                Upload it. We print it. You wear it.
-              </p>
-              <div
-                className={`flex items-center gap-3 mt-7 transition-all duration-700 ease-out delay-[450ms] ${
-                  heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-                }`}
-              >
-                <Link
-                  to="/customize"
-                  className="inline-flex items-center justify-center bg-white text-black font-bold uppercase no-underline transition-all duration-300 hover:bg-mz-gray-200"
-                  style={{ height: '46px', padding: '0 24px', fontSize: '11px', letterSpacing: '0.1em', borderRadius: '6px', border: '1px solid #ffffff' }}
-                >
-                  Customize Your Tee
-                </Link>
-                <Link
-                  to="/shop"
-                  className="inline-flex items-center justify-center bg-transparent text-white font-bold uppercase no-underline transition-all duration-300 hover:bg-white hover:text-black"
-                  style={{ height: '46px', padding: '0 24px', fontSize: '11px', letterSpacing: '0.1em', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.35)' }}
-                >
-                  Shop T-Shirts
-                </Link>
-              </div>
+                Customize Your Tee
+              </Link>
             </div>
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
           </div>
+        ))}
+        {/* Pagination dots */}
+        <div style={{
+          position: 'absolute',
+          bottom: '24px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          gap: '8px',
+          zIndex: 10,
+        }}>
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              aria-label={`Slide ${i + 1}`}
+              style={{
+                width: i === activeSlide ? '24px' : '8px',
+                height: '8px',
+                borderRadius: '4px',
+                background: i === activeSlide ? '#FFFFFF' : 'rgba(255,255,255,0.4)',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                padding: 0,
+              }}
+            />
+          ))}
         </div>
       </section>
 
