@@ -767,7 +767,8 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-        ))}
+          );
+        })}
         {/* Pagination dots */}
         <div style={{
           position: 'absolute',
