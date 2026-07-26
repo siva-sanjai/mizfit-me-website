@@ -720,7 +720,7 @@ export default function HomePage() {
         @media (max-width: 768px) { .hero-cta-btn { height: 48px; padding: 0 24px; font-size: 13px; margin-top: 20px; } }
         .hero-cta-btn:hover { background: #111111; color: #FFFFFF; }
         .hero-arrow { display: flex; }
-        @media (max-width: 768px) { .hero-arrow { display: none; } }
+        @media (max-width: 768px) { .hero-arrow { display: none !important; } }
       `}</style>
       {/* 1. Hero Carousel */}
       <section
@@ -786,24 +786,17 @@ export default function HomePage() {
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 10,
-            width: 44,
-            height: 44,
-            borderRadius: '50%',
             border: 'none',
-            background: 'rgba(255,255,255,0.15)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            color: '#ffffff',
+            background: 'none',
+            color: 'rgba(255,255,255,0.7)',
             cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'background 0.2s ease',
+            padding: '8px',
+            transition: 'color 0.2s ease',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.3)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#ffffff'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
@@ -817,24 +810,17 @@ export default function HomePage() {
             top: '50%',
             transform: 'translateY(-50%)',
             zIndex: 10,
-            width: 44,
-            height: 44,
-            borderRadius: '50%',
             border: 'none',
-            background: 'rgba(255,255,255,0.15)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            color: '#ffffff',
+            background: 'none',
+            color: 'rgba(255,255,255,0.7)',
             cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'background 0.2s ease',
+            padding: '8px',
+            transition: 'color 0.2s ease',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.3)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)'; }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#ffffff'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <polyline points="9 18 15 12 9 6" />
           </svg>
         </button>
