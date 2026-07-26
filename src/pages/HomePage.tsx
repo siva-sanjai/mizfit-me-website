@@ -718,6 +718,7 @@ export default function HomePage() {
           transition: background 250ms ease, color 250ms ease;
         }
         @media (max-width: 768px) { .hero-cta-btn { height: 48px; padding: 0 24px; font-size: 13px; margin-top: 20px; } }
+        @media (max-width: 480px) { .hero-cta-btn { height: 42px; padding: 0 20px; font-size: 12px; margin-top: 16px; } }
         .hero-cta-btn:hover { background: #111111; color: #FFFFFF; }
         .hero-arrow { display: flex; }
         @media (max-width: 768px) { .hero-arrow { display: none !important; } }
